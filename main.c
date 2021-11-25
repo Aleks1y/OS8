@@ -70,20 +70,22 @@ int checkInput(int argc, char** argv) {
 int calc_pi(int number_of_threads, int number_of_steps, double* pi) {
     pthread_t threads[number_of_threads];
     thread_parameters parameters[number_of_threads];
-
-    for (int i = 0; i < number_of_threads; ++i) {
+	
+    int i;
+    for (i = 0; i < number_of_threads; ++i) {
         parameters[i].thread_number = i;
         parameters[i].number_of_threads = number_of_threads;
         parameters[i].number_of_steps = number_of_steps;
         errno = pthread_create(&threads[i], NULL, thread_body, (void*)(&parameters[i]));
         if (errno != SUCCESS) {
-            perror("Creating thread error");
-            return ERROR;
-        }
+             perror("Creating thread error");
+             break;
+	}
     }
-	
+
+    int created_threads_num = i;
     double* part_pi = 0;
-    for (int i = 0; i < number_of_threads; ++i) {
+    for (i = 0; i < created_threads_num; ++i) {
         errno = pthread_join(threads[i], (void**)(&part_pi));
         if (errno != SUCCESS) {
             perror("Joining thread error");
@@ -92,7 +94,11 @@ int calc_pi(int number_of_threads, int number_of_steps, double* pi) {
         *pi += *part_pi;
     }
 
-    *pi *= 4.0;
+    if(created_threads_num != number_of_threads){
+	 return ERROR;
+    }
+
+    pi *= 4.0;
 	
     return SUCCESS;
 }
