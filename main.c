@@ -10,6 +10,7 @@
 #define MINIMUM_NUMBER_OF_THREADS 1
 #define MAXIMUM_NUMBER_OF_STEPS 1000000000
 #define SUCCESS 0
+#define NOT_DIGIT 0
 #define ERROR 1
 
 typedef struct thread_parameters {
@@ -38,13 +39,13 @@ int checkInput(int argc, char** argv) {
     }
 	
     for(int i = 0; i < strlen(argv[1]); i++)
-    	if (!isdigit(argv[1][i])) {
+    	if (isdigit(argv[1][i]) == NOT_DIGIT) {
             fprintf(stderr, "Wrong number of threads\n");
             return ERROR;
     	}
 	
     for(int i = 0; i < strlen(argv[2]); i++)
-    	if (!isdigit(argv[2][i])) {
+    	if (isdigit(argv[2][i]) == NOT_DIGIT) {
             fprintf(stderr, "Wrong number of steps\n");
             return ERROR;
     	}
